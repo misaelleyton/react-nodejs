@@ -14,29 +14,70 @@ import { createTheme, ThemeProvider } from '@mui/material/styles'
 import SearchForm from './SearchForm'
 import PaymentForm from './PaymentForm'
 import Review from './Review'
-
+import type { FormType, CountryType, Vehicle } from '../assets/types'
+import type { Dayjs } from 'dayjs'
+import { vehicles } from '../api'
 const steps = ['Request Information', 'Payment details', 'Review your order']
-
-function getStepContent (step: number): JSX.Element {
-  switch (step) {
-    case 0:
-      return <SearchForm />
-    case 1:
-      return <PaymentForm />
-    case 2:
-      return <Review />
-    default:
-      throw new Error('Unknown step')
-  }
-}
 
 const theme = createTheme()
 
 const Checkout: React.FC = () => {
   const [activeStep, setActiveStep] = React.useState(0)
+  const [searchResults, setSearchResults] = React.useState<Vehicle[]>([])
+  const [selectedVehicle, setSelectedVehicle] = React.useState<Vehicle>()
+  /* eslint-disable @typescript-eslint/no-unsafe-assignment */ // only for time reasons
+  const [formData, setFormData] = React.useState<FormType>({
+    type: null,
+    country: null,
+    location: null,
+    name: null,
+    startDate: null,
+    endDate: null
+  })
 
+  const updateData = (field: string, newValue: string | CountryType | Dayjs | null): void => {
+    const newData = { ...formData, [field]: newValue }
+    if (field === 'country') {
+      newData.location = (newValue as CountryType).label
+    }
+    setFormData(formData => newData)
+  }
+
+  const selectVehicle = (vehicle: Vehicle): void => {
+    console.log(vehicle)
+    setSelectedVehicle(vehicle)
+  }
+  function getStepContent (step: number): JSX.Element {
+    switch (step) {
+      case 0:
+        return <SearchForm updateData={updateData} formData={formData}/>
+      case 1:
+        return <PaymentForm searchResults={searchResults} formData={formData} selectVehicle={selectVehicle} selectedVehicle={selectedVehicle}/>
+      case 2:
+        return <Review />
+      default:
+        throw new Error('Unknown step')
+    }
+  }
   const handleNext = (): void => {
-    setActiveStep(activeStep + 1)
+    const process = async (): Promise<any> => {
+      switch (activeStep) {
+        case 0: {
+          const { type, location } = { ...formData }
+          const data = await vehicles.default({ type, location })
+          setSearchResults(data as Vehicle[])
+          break
+        }
+        case 1: {
+          break
+        }
+        case 2: {
+          break
+        }
+      }
+      setActiveStep(activeStep + 1)
+    }
+    process().catch((e) => { console.log(e) })
   }
 
   const handleBack = (): void => {
@@ -61,7 +102,7 @@ const Checkout: React.FC = () => {
           </Typography>
         </Toolbar>
       </AppBar>
-      <Container component="main" maxWidth="sm" sx={{ mb: 4 }}>
+      <Container component="main" maxWidth="sm" sx={{ mb: 6 }}>
         <Paper variant="outlined" sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}>
           <Typography component="h1" variant="h4" align="center">
             Vehicle Reservations

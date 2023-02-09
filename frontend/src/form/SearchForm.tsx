@@ -1,106 +1,98 @@
-import * as React from 'react'
+import React from 'react'
 import Grid from '@mui/material/Grid'
-import Typography from '@mui/material/Typography'
 import TextField from '@mui/material/TextField'
 import FormControlLabel from '@mui/material/FormControlLabel'
-import Checkbox from '@mui/material/Checkbox'
+import FormLabel from '@mui/material/FormLabel'
+import Radio from '@mui/material/Radio'
+import RadioGroup from '@mui/material/RadioGroup'
+import SedanIcon from '../assets/sedan'
+import PickupIcon from '../assets/pickup-truck'
+import SportsCarIcon from '../assets/sports-car'
+import MotorCycleIcon from '../assets/motorcycle'
+import Autocomplete from '@mui/material/Autocomplete'
+import Box from '@mui/material/Box'
+import { countries } from '../assets/countries'
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker'
+import type { SearchFormParams, CountryType } from '../assets/types'
 
-const SearchForm = (): JSX.Element => {
+const SearchForm: React.FC<SearchFormParams> = ({ updateData, formData }): JSX.Element => {
   return (
     <React.Fragment>
-      <Typography variant="h6" gutterBottom>
-        Date and vehicle information
-      </Typography>
-      <Grid container spacing={3}>
-        <Grid item xs={12} sm={6}>
-          <TextField
-            required
-            id="firstName"
-            name="firstName"
-            label="First name"
-            fullWidth
-            autoComplete="given-name"
-            variant="standard"
-          />
+      <Grid container spacing={3} justifyContent="center">
+        <Grid item xs={12} sm={12} >
+          <FormLabel id="car-type-select">Select vehicle type</FormLabel>
+          <RadioGroup
+            row
+            aria-labelledby='car-type-select'
+            onChange={(event) => { updateData('type', event.target.value) }}
+            name='row-radio-buttons-group'
+          >
+            <FormControlLabel value='sedan' control={<Radio value="sedan" required={true} icon={<SedanIcon iconColor='black'/>} checkedIcon={<SedanIcon iconColor='red'/>}/>} label='Sedan' />
+            <FormControlLabel value='pickup' control={<Radio value="pickup" required={true} icon={<PickupIcon iconColor='black' />} checkedIcon={<PickupIcon iconColor='red'/>}/>} label='Pickup Truck' />
+            <FormControlLabel value='sports' control={<Radio value="sports" required={true} icon={<SportsCarIcon iconColor='black' />} checkedIcon={<SportsCarIcon iconColor='red'/>}/>} label='Sports Car' />
+            <FormControlLabel value='motorcycle' control={<Radio value="motorcycle" required={true} icon={<MotorCycleIcon iconColor='black' />} checkedIcon={<MotorCycleIcon iconColor='red'/>}/>} label='Motorcycle' />
+          </RadioGroup>
         </Grid>
         <Grid item xs={12} sm={6}>
-          <TextField
-            required
-            id="lastName"
-            name="lastName"
-            label="Last name"
-            fullWidth
-            autoComplete="family-name"
-            variant="standard"
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <TextField
-            required
-            id="address1"
-            name="address1"
-            label="Address line 1"
-            fullWidth
-            autoComplete="shipping address-line1"
-            variant="standard"
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <TextField
-            id="address2"
-            name="address2"
-            label="Address line 2"
-            fullWidth
-            autoComplete="shipping address-line2"
-            variant="standard"
-          />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField
-            required
-            id="city"
-            name="city"
-            label="City"
-            fullWidth
-            autoComplete="shipping address-level2"
-            variant="standard"
-          />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField
-            id="state"
-            name="state"
-            label="State/Province/Region"
-            fullWidth
-            variant="standard"
+          <Autocomplete
+            id="country-select"
+            options={countries}
+            autoHighlight
+            getOptionLabel={(option: CountryType) => option.label ?? ''}
+            value={formData.country}
+            onChange={(event: any, newValue: CountryType | null) => {
+              /* eslint-disable @typescript-eslint/no-unsafe-call */ // only for time reasons
+              updateData('country', newValue)
+            }}
+            renderOption={(props, option: CountryType) => (
+              <Box component="li" sx={{ '& > img': { mr: 2, flexShrink: 0 } }} {...props}>
+                <img
+                  loading="lazy"
+                  width="20"
+                  src={`https://flagcdn.com/w20/${option.code.toLowerCase()}.png`}
+                  srcSet={`https://flagcdn.com/w40/${option.code.toLowerCase()}.png 2x`}
+                  alt=""
+                />
+                {option.label} ({option.code})
+              </Box>
+            )}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Select a pickup location"
+                inputProps={{
+                  ...params.inputProps,
+                  autoComplete: 'new-password' // disable autocomplete and autofill
+                }}
+              />
+            )}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
           <TextField
             required
-            id="zip"
-            name="zip"
-            label="Zip / Postal code"
+            id='name'
+            name='name'
+            label='Full Name'
             fullWidth
-            autoComplete="shipping postal-code"
-            variant="standard"
+            variant='outlined'
+            onChange={(event) => { updateData('name', event.target.value) }}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
-          <TextField
-            required
-            id="country"
-            name="country"
-            label="Country"
-            fullWidth
-            autoComplete="shipping country"
-            variant="standard"
+          <DateTimePicker
+            label="Pickup Date and Time"
+            value={formData.startDate}
+            onChange={(event) => { updateData('startDate', event) }}
+            renderInput={(params) => <TextField {...params} required/>}
           />
         </Grid>
-        <Grid item xs={12}>
-          <FormControlLabel
-            control={<Checkbox color="secondary" name="saveAddress" value="yes" />}
-            label="Use this address for payment details"
+        <Grid item xs={12} sm={6}>
+          <DateTimePicker
+            label="Dropoff Date and Time"
+            value={formData.endDate}
+            onChange={(event) => { updateData('endDate', event) }}
+            renderInput={(params) => <TextField {...params} required/>}
           />
         </Grid>
       </Grid>

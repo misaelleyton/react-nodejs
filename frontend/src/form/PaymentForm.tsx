@@ -4,13 +4,28 @@ import Grid from '@mui/material/Grid'
 import TextField from '@mui/material/TextField'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import Checkbox from '@mui/material/Checkbox'
+import VehicleCard from './VehicleCard'
+import type { ResultsParams, Vehicle } from '../assets/types'
 
-const PaymentForm = (): JSX.Element => {
+const PaymentForm: React.FC<ResultsParams> = ({ searchResults, formData, selectVehicle, selectedVehicle }): JSX.Element => {
+  const vehiclesCards = (searchResults: Vehicle[]): JSX.Element => {
+    const elements = searchResults.map(vehicle => {
+      return <Grid item xs={12} sm={6} key={vehicle?.id}>
+        <VehicleCard vehicle={vehicle} formData={formData} selectVehicle={selectVehicle} selectedVehicle={selectedVehicle}/>
+      </Grid>
+    })
+    return (<> {elements} </>)
+  }
   return (
     <React.Fragment>
       <Typography variant="h6" gutterBottom>
         Payment method
       </Typography>
+      <Grid container spacing={3}>
+        <>
+          { vehiclesCards(searchResults) }
+        </>
+      </Grid>
       <Grid container spacing={3}>
         <Grid item xs={12} md={6}>
           <TextField
@@ -51,12 +66,6 @@ const PaymentForm = (): JSX.Element => {
             fullWidth
             autoComplete="cc-csc"
             variant="standard"
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <FormControlLabel
-            control={<Checkbox color="secondary" name="saveCard" value="yes" />}
-            label="Remember credit card details for next time"
           />
         </Grid>
       </Grid>
