@@ -20,7 +20,7 @@ const SearchForm: React.FC<SearchFormParams> = ({ updateData, formData }): JSX.E
     <React.Fragment>
       <Grid container spacing={3} justifyContent="center">
         <Grid item xs={12} sm={12} >
-          <FormLabel id="car-type-select">Select vehicle type</FormLabel>
+          <FormLabel id="car-type-select">Select vehicle type *</FormLabel>
           <RadioGroup
             row
             aria-labelledby='car-type-select'
@@ -72,6 +72,7 @@ const SearchForm: React.FC<SearchFormParams> = ({ updateData, formData }): JSX.E
           <TextField
             required
             id='name'
+            data-testid='name'
             name='name'
             label='Full Name'
             fullWidth

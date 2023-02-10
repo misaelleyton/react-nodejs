@@ -3,7 +3,7 @@ import cors from 'cors'
 import helmet from 'helmet'
 import bodyParser from 'body-parser'
 import * as dotenv from 'dotenv'
-import ScheduleRoute from './Routes/ScheduleRoute'
+import ReservationRoute from './Routes/ReservationRoute'
 import VehiclesRoute from './Routes/VehiclesRoute'
 import morgan from 'morgan'
 import { type ResponseError } from './types'
@@ -21,7 +21,7 @@ app.use(morgan<Request, Response>('dev'))
 const serverPort = process.env.PORT ?? ''
 
 // user route
-app.use('/api/schedule', ScheduleRoute)
+app.use('/api/schedule', ReservationRoute)
 app.use('/api/vehicles', VehiclesRoute)
 
 // 404 response

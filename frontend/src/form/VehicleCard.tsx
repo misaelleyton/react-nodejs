@@ -8,41 +8,37 @@ import type { VehicleParams } from '../assets/types'
 import dayjs from 'dayjs'
 
 const VehicleCard: React.FC<VehicleParams> = ({ vehicle, formData, selectVehicle, selectedVehicle }): JSX.Element => {
-  console.log('vehicle')
-  console.log(vehicle)
-  console.log('selectedVehicle')
-  console.log(selectedVehicle)
-  const startDate = dayjs(formData.startDate)
-  const endDate = dayjs(formData.endDate)
+  const startDate = dayjs(formData?.startDate)
+  const endDate = dayjs(formData?.endDate)
   // we only charge one more day in case the return time is more than 12 hours from start time
   const daysDiff = Math.round(endDate.diff(startDate, 'day', true) ?? 1)
   return (
-    <Card sx={{ maxWidth: 250 }} variant='outlined' style={{ backgroundColor: '#f5f5f5' }} className={vehicle.id === selectedVehicle?.id ? 'selected' : 'notSelected'} id={`${vehicle.id}`}>
+    <Card sx={{ maxWidth: 250 }} variant='outlined' style={{ backgroundColor: '#f5f5f5' }} className={vehicle?.id === selectedVehicle?.id ? 'selected' : 'notSelected'} id={`${vehicle?.id}`}>
       <CardActionArea
-        id={`${vehicle.id}`}
-        onClick={(event) => { selectVehicle(vehicle) }}
+        id={`${vehicle?.id}`}
+        onClick={(event) => { selectVehicle?.(vehicle) }}
       >
         <CardMedia
-          id={`${vehicle.id}`}
+          id={`${vehicle?.id}`}
           style={{ backgroundColor: 'white' }}
           component='img'
           height='140'
-          image={vehicle.image}
-          alt={vehicle.manufacturer + ' ' + vehicle.model}
+          image={vehicle?.image}
+          alt={vehicle?.manufacturer + ' ' + vehicle?.model}
         />
-        <CardContent id={`${vehicle.id}`}>
+        <CardContent id={`${vehicle?.id}`}>
           <Typography gutterBottom variant='h5' component='div'>
-            { `${vehicle.manufacturer}` }
+            { `${vehicle?.manufacturer}` }
           </Typography>
           <Typography variant='body2' color='text.secondary'>
-            { `${vehicle.manufacturer} ${vehicle.model} ${vehicle.year}`}
+            { `${vehicle?.manufacturer} ${vehicle?.model} ${vehicle?.year}`}
             <br />
-            { `Located in ${vehicle.location}`}
+            { `Located in ${vehicle?.location}`}
             <br />
-            { `Daily Price $${vehicle.dailyPrice}`}
+            { `Daily Price $${vehicle?.dailyPrice}`}
             <br />
             <Typography gutterBottom variant='h6' component='div'>
-              { `Total Price $${daysDiff * vehicle.dailyPrice}`}
+              { `Total Price $${daysDiff * (vehicle?.dailyPrice ?? 1)}`}
             </Typography>
           </Typography>
         </CardContent>

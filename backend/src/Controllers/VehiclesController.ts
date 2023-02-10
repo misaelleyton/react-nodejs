@@ -2,7 +2,8 @@ import { type Request, type Response, type NextFunction } from 'express'
 import createError from 'http-errors'
 import { getVehicleValidation } from '../Validations/VehicleValidation'
 import { getVehiclesFromFile } from '../utils/dbHandler'
-import { type Vehicle } from '../types'
+import type { Vehicle } from '../types'
+
 /**
  * Get vehicles
  * @param req
@@ -16,8 +17,8 @@ export const getVehicles = (
 ): void => {
   const process = async (): Promise<any> => {
     try {
-      const validatedField = (await getVehicleValidation.validateAsync(req.query)) as Partial<Vehicle>
-      const vehicles: Vehicle[] = getVehiclesFromFile(validatedField)
+      const validatedFields = (await getVehicleValidation.validateAsync(req.query)) as Partial<Vehicle>
+      const vehicles: Vehicle[] = getVehiclesFromFile(validatedFields)
       res.status(200).json(
         vehicles
       )
@@ -32,3 +33,4 @@ export const getVehicles = (
   }
   process().catch((e) => { console.log(e) })
 }
+
